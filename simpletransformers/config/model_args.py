@@ -241,7 +241,7 @@ class T5Args(ModelArgs):
     top_k: float = None
     top_p: float = None
     use_multiprocessed_decoding: bool = True
-    custom_func_on_eval_end: str = ''
+    # custom_func_on_eval_end: str = ''
 
 
 @dataclass

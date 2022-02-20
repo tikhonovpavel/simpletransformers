@@ -66,52 +66,52 @@ MODEL_CLASSES = {
 
 
 
-
-import numpy as np
-import pandas as pd
-from rouge import FilesRouge
-# from tqdm import tqdm
-import torch
-import subprocess
-
-def func_on_eval_end(global_step, model, results, output_dir, args):
-    print('func_on_eval_end')
-    print('global step:', global_step)
-
-    hyps = model.predict(df_val.input_text.tolist())
-
-    # script_path = os.path.join(output_dir, './../multiple_training/upload.py')
-    hyp_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.hyps")
-    ref_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.targets")
-    score_path = os.path.join(output_dir, f"checkpoint-{global_step}/score.json")
-    # model_path = os.path.join(output_dir, f"checkpoint-{global_step}/pytorch_model.bin")
-
-    with open(hyp_path, 'w') as f:
-        f.write('\n'.join([x.replace('\n', ' ') if len(x) > 0 else ' ' for x in hyps]))
-
-    with open(ref_path, 'w') as f:
-        f.write('\n'.join([x.replace('\n', ' ') if len(x) > 0 else ' ' for x in df_val.target_text.tolist()]))
-
-    files_rouge = FilesRouge()
-    try:
-        score = files_rouge.get_scores(hyp_path, ref_path, avg=True)
-    except ValueError:
-        print('Hypothesis is empty')
-        score = {}
-
-    json.dump(score, open(score_path, 'w'))
-
-    ydsk.mkdir(f'/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}')
-    for x in [hyp_path, score_path, ref_path]:#, model_path]:
-        ydsk.upload(x, f"/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}/{x.split('/')[-1]}")
-        # subprocess.run(f"nohup python {script_path} --model mt5-small --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
-
-    # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{hyp_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
-    # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{score_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
-    # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{ref_path} --bot_server_address=129.153.206.24 --silent=0 &", shell=True)
-    # subprocess.run(f"nohup python upload.py --model mt5 --filename={model_path} --bot_server_address=129.153.206.24 --silent=0 &", shell=True)
-
-
+#
+# import numpy as np
+# import pandas as pd
+# from rouge import FilesRouge
+# # from tqdm import tqdm
+# import torch
+# import subprocess
+#
+# def func_on_eval_end(global_step, model, results, output_dir, args):
+#     print('func_on_eval_end')
+#     print('global step:', global_step)
+#
+#     hyps = model.predict(df_val.input_text.tolist())
+#
+#     # script_path = os.path.join(output_dir, './../multiple_training/upload.py')
+#     hyp_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.hyps")
+#     ref_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.targets")
+#     score_path = os.path.join(output_dir, f"checkpoint-{global_step}/score.json")
+#     # model_path = os.path.join(output_dir, f"checkpoint-{global_step}/pytorch_model.bin")
+#
+#     with open(hyp_path, 'w') as f:
+#         f.write('\n'.join([x.replace('\n', ' ') if len(x) > 0 else ' ' for x in hyps]))
+#
+#     with open(ref_path, 'w') as f:
+#         f.write('\n'.join([x.replace('\n', ' ') if len(x) > 0 else ' ' for x in df_val.target_text.tolist()]))
+#
+#     files_rouge = FilesRouge()
+#     try:
+#         score = files_rouge.get_scores(hyp_path, ref_path, avg=True)
+#     except ValueError:
+#         print('Hypothesis is empty')
+#         score = {}
+#
+#     json.dump(score, open(score_path, 'w'))
+#
+#     ydsk.mkdir(f'/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}')
+#     for x in [hyp_path, score_path, ref_path]:#, model_path]:
+#         ydsk.upload(x, f"/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}/{x.split('/')[-1]}")
+#         # subprocess.run(f"nohup python {script_path} --model mt5-small --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
+#
+#     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{hyp_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
+#     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{score_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
+#     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{ref_path} --bot_server_address=129.153.206.24 --silent=0 &", shell=True)
+#     # subprocess.run(f"nohup python upload.py --model mt5 --filename={model_path} --bot_server_address=129.153.206.24 --silent=0 &", shell=True)
+#
+#
 
 
 
@@ -697,12 +697,6 @@ class T5Model:
                                 results=results,
                             )
 
-                        if args.custom_func_on_eval_end:
-                            self.func_hoba_field.func_hoba()
-                            func_on_eval_end(global_step, model, results, output_dir, args)
-
-                            # args.custom_func_on_eval_end(global_step, model, results)
-
                         training_progress_scores["global_step"].append(global_step)
                         training_progress_scores["train_loss"].append(current_loss)
                         for key in results:
@@ -850,6 +844,9 @@ class T5Model:
                     os.path.join(args.output_dir, "training_progress_scores.csv"),
                     index=False,
                 )
+
+                if self.func_hoba_field:
+                    self.func_hoba_field.func_hoba(global_step, results)
 
                 if args.wandb_project or self.is_sweeping:
                     wandb.log(self._get_last_metrics(training_progress_scores))
