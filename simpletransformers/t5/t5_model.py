@@ -121,7 +121,9 @@ def func_on_eval_end(global_step, model, results, output_dir, args):
 
 
 
-
+class Hoba:
+    def __init__(self, func_hoba):
+        self.func_hoba = func_hoba
 
 
 
@@ -130,6 +132,7 @@ class T5Model:
         self,
         model_type,
         model_name,
+        func_hoba_field=None,
         args=None,
         tokenizer=None,
         use_cuda=True,
@@ -150,6 +153,8 @@ class T5Model:
         """  # noqa: ignore flake8"
 
         self.args = self._load_model_args(model_name)
+
+        self.func_hoba_field = func_hoba_field
 
         if isinstance(args, dict):
             self.args.update_from_dict(args)
@@ -693,7 +698,9 @@ class T5Model:
                             )
 
                         if args.custom_func_on_eval_end:
+                            self.func_hoba_field.func_hoba()
                             func_on_eval_end(global_step, model, results, output_dir, args)
+
                             # args.custom_func_on_eval_end(global_step, model, results)
 
                         training_progress_scores["global_step"].append(global_step)
