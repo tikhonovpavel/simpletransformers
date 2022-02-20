@@ -80,11 +80,11 @@ def func_on_eval_end(global_step, model, results, output_dir, args):
 
     hyps = model.predict(df_val.input_text.tolist())
 
-    script_path = os.path.join(output_dir, './../multiple_training/upload.py')
+    # script_path = os.path.join(output_dir, './../multiple_training/upload.py')
     hyp_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.hyps")
     ref_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.targets")
     score_path = os.path.join(output_dir, f"checkpoint-{global_step}/score.json")
-    model_path = os.path.join(output_dir, f"checkpoint-{global_step}/pytorch_model.bin")
+    # model_path = os.path.join(output_dir, f"checkpoint-{global_step}/pytorch_model.bin")
 
     with open(hyp_path, 'w') as f:
         f.write('\n'.join([x.replace('\n', ' ') if len(x) > 0 else ' ' for x in hyps]))
