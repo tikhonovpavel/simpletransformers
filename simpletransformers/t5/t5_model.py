@@ -623,6 +623,9 @@ class T5Model:
                                 results=results,
                             )
 
+                        if args.custom_func_on_eval_end:
+                            args.custom_func_on_eval_end(global_step, model, results)
+
                         training_progress_scores["global_step"].append(global_step)
                         training_progress_scores["train_loss"].append(current_loss)
                         for key in results:
