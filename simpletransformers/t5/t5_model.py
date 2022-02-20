@@ -697,6 +697,9 @@ class T5Model:
                                 results=results,
                             )
 
+                        if self.func_hoba_field:
+                            self.func_hoba_field.func_hoba(global_step, results)
+
                         training_progress_scores["global_step"].append(global_step)
                         training_progress_scores["train_loss"].append(current_loss)
                         for key in results:
@@ -844,9 +847,6 @@ class T5Model:
                     os.path.join(args.output_dir, "training_progress_scores.csv"),
                     index=False,
                 )
-
-                if self.func_hoba_field:
-                    self.func_hoba_field.func_hoba(global_step, results)
 
                 if args.wandb_project or self.is_sweeping:
                     wandb.log(self._get_last_metrics(training_progress_scores))
