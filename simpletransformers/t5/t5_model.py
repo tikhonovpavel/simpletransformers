@@ -74,7 +74,7 @@ from tqdm import tqdm
 import torch
 import subprocess
 
-def func_on_eval_end(global_step, model, results, output_dir):
+def func_on_eval_end(global_step, model, results, output_dir, args):
     print('func_on_eval_end')
     print('global step:', global_step)
 
@@ -103,7 +103,7 @@ def func_on_eval_end(global_step, model, results, output_dir):
 
     ydsk.mkdir(f'/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}')
     for x in [hyp_path, score_path, ref_path, model_path]:
-        subprocess.run(f"nohup python {script_path} --model mt5 --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
+        subprocess.run(f"nohup python {script_path} --model mt5-small --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
 
     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{hyp_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{score_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
@@ -692,7 +692,7 @@ class T5Model:
                             )
 
                         if args.custom_func_on_eval_end:
-                            func_on_eval_end(global_step, model, results, output_dir)
+                            func_on_eval_end(global_step, model, results, output_dir, args)
                             # args.custom_func_on_eval_end(global_step, model, results)
 
                         training_progress_scores["global_step"].append(global_step)
