@@ -70,7 +70,7 @@ MODEL_CLASSES = {
 import numpy as np
 import pandas as pd
 from rouge import FilesRouge
-from tqdm import tqdm
+# from tqdm import tqdm
 import torch
 import subprocess
 
@@ -102,8 +102,9 @@ def func_on_eval_end(global_step, model, results, output_dir, args):
     json.dump(score, open(score_path, 'w'))
 
     ydsk.mkdir(f'/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}')
-    for x in [hyp_path, score_path, ref_path, model_path]:
-        subprocess.run(f"nohup python {script_path} --model mt5-small --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
+    for x in [hyp_path, score_path, ref_path]:#, model_path]:
+        ydsk.upload(x, f"/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}/{x.split('/')[-1]}")
+        # subprocess.run(f"nohup python {script_path} --model mt5-small --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
 
     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{hyp_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{score_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
