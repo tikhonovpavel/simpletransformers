@@ -72,7 +72,7 @@ import pandas as pd
 from rouge import FilesRouge
 from tqdm import tqdm
 import torch
-
+import subprocess
 
 def func_on_eval_end(global_step, model, results, output_dir):
     print('func_on_eval_end')
@@ -80,6 +80,7 @@ def func_on_eval_end(global_step, model, results, output_dir):
 
     hyps = model.predict(df_val.input_text.tolist())
 
+    script_path = os.path.join(output_dir, './../multiple_training/upload.py')
     hyp_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.hyps")
     ref_path = os.path.join(output_dir, f"checkpoint-{global_step}/val.targets")
     score_path = os.path.join(output_dir, f"checkpoint-{global_step}/score.json")
@@ -102,7 +103,7 @@ def func_on_eval_end(global_step, model, results, output_dir):
 
     ydsk.mkdir(f'/models/wikipedia-multilingual-mt5-small/checkpoint-{global_step}')
     for x in [hyp_path, score_path, ref_path, model_path]:
-        subprocess.run(f"nohup python upload.py --model mt5 --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
+        subprocess.run(f"nohup python {script_path} --model mt5 --filename={x} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
 
     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{hyp_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
     # subprocess.run(f"nohup python upload.py --model mt5 --filename=outputs/checkpoint-{global_step}/{score_path} --bot_server_address=129.153.206.24 --silent=1 &", shell=True)
